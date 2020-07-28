@@ -4,7 +4,8 @@ Crawl Pastebin new public pastes and save them in json file
 
 ## Install
 ```
-cd %path_containing_proj%\
+git clone https://github.com/ygilad/pastebin_crawler.git
+cd pastebin_crawler
 python -m venv .env
 .env\scripts\activate
 pip install -r requirements.txt
