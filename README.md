@@ -3,7 +3,8 @@ Crawl Pastebin new public pastes and save them in json file
 
 
 ## Install
-```cd %path_containing_proj%\
+```
+cd %path_containing_proj%\
 python -m venv .env
 .env\scripts\activate
 pip install -r requirements.txt
@@ -12,5 +13,6 @@ pip install -r requirements.txt
 
 
 ## Run
-```.env\scripts\python main.py
+```
+.env\scripts\python main.py
 ```
