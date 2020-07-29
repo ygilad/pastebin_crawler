@@ -1,16 +1,37 @@
+import abc
+
 from common.entities import Paste
 from common.general import Borg, PasteBinTime
 from tinydb import TinyDB
 
 
-class PastesDB(Borg):
+def paste_db():
+    # This factory function for PastesTinyDB will allow
+    # switching dal implementations quickly
+    return PastesTinyDB()
+
+
+class PastesDBBase(Borg, metaclass=abc.ABCMeta):
+    @abc.abstractmethod
+    def insert_paste(self, paste):
+        pass
+
+    @abc.abstractmethod
+    def get_latest_paste(self):
+        return dict()
+
+
+class PastesTinyDB(PastesDBBase):
+    PASTE_DB_FILENAME = 'pastes.db.json'
+    MATA_DB_FILENAME = 'meta.db.json'
+
     def __init__(self):
         super().__init__()
 
         if not hasattr(self, '_pastes_db'):
-            self._pastes_db = TinyDB('pastes.db.json')
+            self._pastes_db = TinyDB(self.__class__.PASTE_DB_FILENAME)
         if not hasattr(self, '_meta_db'):
-            self._meta_db = TinyDB('meta.db.json')
+            self._meta_db = TinyDB(self.__class__.MATA_DB_FILENAME)
 
     def insert_paste(self, paste):
         if isinstance(paste, Paste):
@@ -35,4 +56,3 @@ class PastesDB(Borg):
 
         self._meta_db.truncate()
         self._meta_db.insert(paste)
-

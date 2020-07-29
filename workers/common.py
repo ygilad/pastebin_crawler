@@ -4,23 +4,27 @@ import threading
 
 
 class WorkerThreadBase(threading.Thread, metaclass=abc.ABCMeta):
-    """ A base for worker thread that will allow extending classes easy access to tasks via in & out queues
+    """ A base for worker thread that will allow extending classes
+        easy access to tasks via in & out queues
 
         Ask the thread to stop by calling its join() method.
     """
 
-    def __init__(self, in_q=None, out_q=None, reccurence_interval=None):
+    QUEUE_FETCH_TIMEOUT = 0.05
+
+    def __init__(self, in_q=None, out_q=None):
         super(WorkerThreadBase, self).__init__()
         self._in_q = in_q
         self._out_q = out_q
         self._stop_request = threading.Event()
-        self._reccurence_interval = reccurence_interval
 
     def run(self):
-        # pooling for tasks in the queue, run forever or until called calls join()
+        # Run forever or until called calls join()
+        # by pooling for tasks in the queue in a while loop
         while not self._stop_request.isSet():
             try:
-                task = self._in_q.get(True, 0.05)
+                task = self._in_q. \
+                    get(True, self.__class__.QUEUE_FETCH_TIMEOUT)
                 res = self.perform(task)
                 if res and self._out_q is not None:
                     self._out_q.put(res)

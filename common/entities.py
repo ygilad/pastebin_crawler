@@ -9,7 +9,8 @@ class EntityBase:
 class Paste(EntityBase):
     NAME_PLACEHOLDERS = ['guest', 'anonymous', 'unknown']
 
-    def __init__(self, key=None, url=None, date=None, user=None, title=None, content=None):
+    def __init__(self, key=None, url=None, date=None,
+                 user=None, title=None, content=None):
         self.key = key
         self.url = url
         self.date = date

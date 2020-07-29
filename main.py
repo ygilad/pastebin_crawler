@@ -1,9 +1,8 @@
 import queue
 from time import sleep
-
 from common.entities import ScrapingTask
 from common.general import Borg
-from dal.paste_db import PastesDB
+from dal.paste_db import paste_db
 from scraper.public_pastes import PublicPasteScraper
 from workers.db_worker import PasteSaverWorker
 from workers.paste_worker import PasteScrapingWorker
@@ -22,11 +21,16 @@ class PasteBinScrapeProducer(Borg):
 
         self._workers = list()
         for i in range(self.__class__.SCRAPER_WORKER_COUNT):
-            self._workers.append(PasteScrapingWorker(in_q=self._scraper_q, out_q=self._db_saver_q))
+            self._workers.append(
+                PasteScrapingWorker(
+                    in_q=self._scraper_q,
+                    out_q=self._db_saver_q
+                )
+            )
         self._workers.append(PasteSaverWorker(in_q=self._db_saver_q))
 
         self._scraper = PublicPasteScraper()
-        latest_paste = PastesDB().get_latest_paste()
+        latest_paste = paste_db().get_latest_paste()
         if latest_paste:
             self._scraper.set_latest_paste(latest_paste['key'])
 
